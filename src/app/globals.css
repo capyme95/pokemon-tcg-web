@@ -1,0 +1,61 @@
+@import "tailwindcss";
+
+:root {
+  --background: #000000;
+  --foreground: #ffffff;
+  --card-bg: #111111;
+  --card-border: #333333;
+  --accent: #ffffff;
+  --muted: #666666;
+  --hover: #222222;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card-bg: var(--card-bg);
+  --color-card-border: var(--card-border);
+  --color-accent: var(--accent);
+  --color-muted: var(--muted);
+  --color-hover: var(--hover);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #111111;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #333333;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #444444;
+}
+
+/* Energy type colors */
+.type-fire { color: #ff5722; }
+.type-water { color: #2196f3; }
+.type-grass { color: #4caf50; }
+.type-lightning { color: #ffc107; }
+.type-psychic { color: #9c27b0; }
+.type-fighting { color: #795548; }
+.type-darkness { color: #424242; }
+.type-metal { color: #607d8b; }
+.type-dragon { color: #ff9800; }
+.type-fairy { color: #e91e63; }
+.type-colorless { color: #9e9e9e; }
