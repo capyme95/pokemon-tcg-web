@@ -104,11 +104,39 @@ export async function getCardAttacks(cardId: string): Promise<CardAttack[]> {
   const { data, error } = await supabase
     .from('card_attacks')
     .select('*')
-    .eq('card_id', cardId)
-    .order('attack_order', { ascending: true });
+    .eq('card_id', cardId);
   
   if (error) return [];
-  return data || [];
+  
+  // 转换数据库结构到前端期望的结构
+  return (data || []).map(attack => {
+    // 从name字段中提取攻击名称（去掉前面的能量符号和空格）
+    const nameParts = attack.name?.split(/\s+/) || [];
+    const attackName = nameParts.slice(1).join(' ') || attack.name || '';
+    
+    // 解析能量消耗
+    const cost = attack.cost || '';
+    const energySymbols = cost.split('').filter((c: string) => c.trim());
+    
+    // 解析伤害值
+    let damage: number | null = null;
+    if (attack.damage) {
+      const match = attack.damage.match(/^(\d+)/);
+      if (match) {
+        damage = parseInt(match[1], 10);
+      }
+    }
+    
+    return {
+      id: attack.id,
+      card_id: attack.card_id,
+      attack_name: attackName,
+      energy_cost_total: energySymbols.length,
+      energy_symbols: energySymbols,
+      damage: damage,
+      effect_text: attack.effect || null
+    };
+  });
 }
 
 // 获取卡片的特性
