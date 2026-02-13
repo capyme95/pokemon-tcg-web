@@ -104,12 +104,28 @@ export async function getCardAttacks(cardId: string): Promise<CardAttack[]> {
   const { data, error } = await supabase
     .from('card_attacks')
     .select('*')
-    .eq('card_id', cardId);
+    .eq('card_id', cardId)
+    .order('attack_order', { ascending: true });
   
   if (error) return [];
   
-  // 转换数据库结构到前端期望的结构
+  // 如果数据库已经有转换后的字段，直接使用
+  // 否则使用转换逻辑作为后备
   return (data || []).map(attack => {
+    // 优先使用数据库中的转换字段
+    if (attack.attack_name && attack.energy_symbols) {
+      return {
+        id: attack.id,
+        card_id: attack.card_id,
+        attack_name: attack.attack_name,
+        energy_cost_total: attack.energy_cost_total || 0,
+        energy_symbols: attack.energy_symbols || [],
+        damage: attack.damage ? parseInt(attack.damage, 10) || null : null,
+        effect_text: attack.effect || null
+      };
+    }
+    
+    // 后备：转换数据库结构到前端期望的结构
     // 从name字段中提取攻击名称（去掉前面的能量符号和空格）
     const nameParts = attack.name?.split(/\s+/) || [];
     const attackName = nameParts.slice(1).join(' ') || attack.name || '';
