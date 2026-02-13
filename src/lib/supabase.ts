@@ -109,10 +109,12 @@ export async function getCardAttacks(cardId: string): Promise<CardAttack[]> {
   
   if (error) return [];
   
-  // 如果数据库已经有转换后的字段，直接使用
-  // 否则使用转换逻辑作为后备
+  // 直接使用数据库中的字段，优先使用转换后的字段
   return (data || []).map(attack => {
-    // 优先使用数据库中的转换字段
+    // 如果有effect_text字段，直接使用
+    const effectText = attack.effect_text || attack.effect || null;
+    
+    // 如果有转换后的字段，使用它们
     if (attack.attack_name && attack.energy_symbols) {
       return {
         id: attack.id,
@@ -121,7 +123,7 @@ export async function getCardAttacks(cardId: string): Promise<CardAttack[]> {
         energy_cost_total: attack.energy_cost_total || 0,
         energy_symbols: attack.energy_symbols || [],
         damage: attack.damage ? parseInt(attack.damage, 10) || null : null,
-        effect_text: attack.effect || null
+        effect_text: effectText
       };
     }
     
@@ -150,7 +152,7 @@ export async function getCardAttacks(cardId: string): Promise<CardAttack[]> {
       energy_cost_total: energySymbols.length,
       energy_symbols: energySymbols,
       damage: damage,
-      effect_text: attack.effect || null
+      effect_text: effectText
     };
   });
 }
